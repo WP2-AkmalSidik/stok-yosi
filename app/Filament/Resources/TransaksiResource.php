@@ -91,7 +91,7 @@ class TransaksiResource extends Resource
             ])
             ->actions([
                 EditAction::make()
-                    ->hidden(fn ($record) => $record->jenis_transaksi === 'masuk'), // Transaksi keluar tidak bisa diedit
+                    ->hidden(fn ($record) => $record->jenis_transaksi === 'masuk'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -14,4 +14,10 @@ class Kain extends Model
     {
         return $this->hasMany(Transaksi::class);
     }
+    public function getAvailableStockAttribute()
+    {
+        $stokAwalYard = $this->stok * $this->panjang_per_roll;
+        $stokKeluar = $this->transaksis()->where('jenis_transaksi', 'keluar')->sum('jumlah');
+        return $stokAwalYard - $stokKeluar;
+    }
 }
