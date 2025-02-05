@@ -9,19 +9,23 @@ use Filament\Forms\Form;
 use App\Models\Transaksi;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Illuminate\Support\Collection;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Support\Enums\Alignment;
+use Illuminate\Support\Facades\Blade;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\EditAction;
-use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\TransaksiResource\Pages;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Blade;
+
 class TransaksiResource extends Resource
 {
     protected static ?string $model = Transaksi::class;
     protected static ?string $navigationGroup = 'Pengaturan Stok';
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?string $navigationLabel = 'Pergerakan Stok';
+    public static ?string $label = 'Pergerakan Stok';
 
     public static function form(Form $form): Form
 {
@@ -60,11 +64,16 @@ class TransaksiResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('kain.nama_kain')
                     ->label('Nama Kain')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('jenis_transaksi')
                     ->label('Jenis Transaksi')
+                    ->badge()
+                    ->alignment(Alignment::Center)
+                    ->color(fn(string $state): string => match ($state) {
+                        'masuk' => 'success',
+                        'keluar' => 'danger',
+                    })
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('jumlah')

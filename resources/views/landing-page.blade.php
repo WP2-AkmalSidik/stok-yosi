@@ -82,9 +82,9 @@
                 datasets: [{
                     label: 'Stok Tersedia (Yard)',
                     data: @json($fabrics->map(function ($fabric) {
-    return $fabric->stok * $fabric->panjang_per_roll -
-        $fabric->transaksis()->where('jenis_transaksi', 'keluar')->sum('jumlah');
-})),
+                    return $fabric->stok * $fabric->panjang_per_roll -
+                        $fabric->transaksis()->where('jenis_transaksi', 'keluar')->sum('jumlah');
+                    })),
                     backgroundColor: 'rgba(54, 162, 235, 0.6)',
                     hoverBackgroundColor: 'rgba(54, 162, 235, 0.8)'
                 }]

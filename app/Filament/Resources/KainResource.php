@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\KainResource\Pages;
-use App\Filament\Resources\KainResource\RelationManagers;
-use App\Models\Kain;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\Kain;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\KainResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\KainResource\RelationManagers;
 
 class KainResource extends Resource
 {
@@ -19,6 +20,7 @@ class KainResource extends Resource
 
     protected static ?string $navigationGroup = 'Pengaturan Stok';
     protected static ?string $navigationIcon = 'heroicon-o-numbered-list';
+    protected static ?string $navigationLabel = 'Kain';
 
     public static function form(Form $form): Form
     {
@@ -26,6 +28,7 @@ class KainResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('nama_kain')
                     ->required()
+                    ->searchable()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('stok')
                     ->label('Stok per roll')
@@ -47,32 +50,37 @@ class KainResource extends Resource
             Tables\Columns\TextColumn::make('nama_kain')
                 ->searchable(),
             Tables\Columns\TextColumn::make('stok')
+                ->label('Stok Dalam Roll')
                 ->numeric()
+                ->alignment(Alignment::Center)
                 ->sortable(),
-                Tables\Columns\TextColumn::make('panjang_per_roll')
-                    ->numeric()
-                    ->sortable()
-                    ->formatStateUsing(function ($record) {
-                        return rtrim(rtrim($record->panjang_per_roll, '0'), '.').' yard';
-                    }),
-                Tables\Columns\TextColumn::make('created_at')
-                ->dateTime()
+            Tables\Columns\TextColumn::make('panjang_per_roll')
+                ->label('Stok Per Roll')
+                ->alignment(Alignment::Center)
+                ->numeric()
                 ->sortable()
-                ->toggleable(isToggledHiddenByDefault: true),
+                ->formatStateUsing(function ($record) {
+                    return rtrim(rtrim($record->panjang_per_roll, '0'), '.').' yard';
+                }),
+            Tables\Columns\TextColumn::make('created_at')
+            ->dateTime()
+            ->sortable()
+            ->toggleable(isToggledHiddenByDefault: true),
             Tables\Columns\TextColumn::make('updated_at')
                 ->dateTime()
                 ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true),
             Tables\Columns\TextColumn::make('transaksis')
                 ->label('Stok Tersedia')
+                ->sortable()
+                ->alignment(Alignment::Center)
                 ->formatStateUsing(function ($record) {
-                    $stokAwalYard = $record->stok * $record->panjang_per_roll;
-                    $stokKeluar = $record->transaksis->where('jenis_transaksi', 'keluar')->sum('jumlah');
-                    return ($stokAwalYard - $stokKeluar) . ' yard';
-                    if ($stokKeluar === 0) {
-                        return $stokAwalYard;
-                    }
-                }),
+                $stokAwalYard = $record->stok * $record->panjang_per_roll;
+                $stokKeluar = $record->transaksis->where('jenis_transaksi', 'keluar')->sum('jumlah');
+                return ($stokAwalYard - $stokKeluar) . ' yard';
+                if ($stokKeluar === 0) {
+                    return $stokAwalYard;
+                }}),
             ])
             ->filters([
                 //
