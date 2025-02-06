@@ -28,7 +28,6 @@ class KainResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('nama_kain')
                     ->required()
-                    ->searchable()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('stok')
                     ->label('Stok per roll')
@@ -63,9 +62,9 @@ class KainResource extends Resource
                     return rtrim(rtrim($record->panjang_per_roll, '0'), '.').' yard';
                 }),
             Tables\Columns\TextColumn::make('created_at')
-            ->dateTime()
-            ->sortable()
-            ->toggleable(isToggledHiddenByDefault: true),
+                ->dateTime()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
             Tables\Columns\TextColumn::make('updated_at')
                 ->dateTime()
                 ->sortable()
