@@ -34,7 +34,6 @@ class TransaksiResource extends Resource
             Select::make('kain_id')
                 ->label('Nama Kain')
                 ->relationship(name: 'kain', titleAttribute: 'nama_kain')
-                ->searchable()
                 ->required(),
 
             TextInput::make('jenis_transaksi')
